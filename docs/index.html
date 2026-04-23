@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sloth.js — Documentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0f1c;
+      --surface: #111827;
+      --surface-hover: #161f30;
+      --border: #1e3a5f;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --blue: #3b82f6;
+      --blue-glow: #60a5fa;
+      --green: #10b981;
+      --green-light: #34d399;
+      --accent: #0ea5e9;
+      --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+      --sidebar-w: 280px;
+      --header-h: 64px;
+      --radius: 8px;
+      --shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--blue); text-decoration: none; transition: 0.2s; }
+    a:hover { color: var(--blue-glow); }
+    code { font-family: var(--font-mono); font-size: 0.9em; background: var(--surface-hover); padding: 2px 6px; border-radius: 4px; color: var(--green-light); }
+    pre {
+      background: #0b1120;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      overflow-x: auto;
+      position: relative;
+      margin: 1rem 0;
+    }
+    pre code { background: transparent; padding: 0; color: var(--text); font-size: 0.85rem; line-height: 1.5; }
+    .copy-btn {
+      position: absolute; top: 8px; right: 8px;
+      background: var(--surface-hover); border: 1px solid var(--border);
+      color: var(--text-muted); padding: 4px 8px; border-radius: 4px;
+      cursor: pointer; font-size: 0.75rem; font-family: var(--font-sans);
+      transition: 0.2s;
+    }
+    .copy-btn:hover { background: var(--border); color: var(--text); }
+
+    /* Header */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; height: var(--header-h);
+      background: rgba(10,15,28,0.85); backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border); z-index: 100;
+      display: flex; align-items: center; padding: 0 1.5rem;
+    }
+    .logo { font-weight: 700; font-size: 1.25rem; display: flex; align-items: center; gap: 8px; color: var(--text); }
+    .logo span { color: var(--green); }
+    .menu-toggle {
+      display: none; background: none; border: none; color: var(--text);
+      font-size: 1.5rem; cursor: pointer; margin-left: auto;
+    }
+
+    /* Sidebar */
+    #sidebar {
+      position: fixed; top: var(--header-h); left: 0; bottom: 0; width: var(--sidebar-w);
+      background: var(--surface); border-right: 1px solid var(--border);
+      overflow-y: auto; padding: 1.5rem 0; z-index: 90;
+      transform: translateX(0); transition: transform 0.3s ease;
+    }
+    #sidebar::-webkit-scrollbar { width: 6px; }
+    #sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    .nav-group { margin-bottom: 1.5rem; }
+    .nav-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); padding: 0 1.5rem; margin-bottom: 0.5rem; font-weight: 600; }
+    .nav-link {
+      display: block; padding: 0.4rem 1.5rem; color: var(--text-muted); font-size: 0.9rem;
+      border-left: 3px solid transparent; transition: 0.2s;
+    }
+    .nav-link:hover, .nav-link.active { color: var(--text); background: var(--surface-hover); border-left-color: var(--green); }
+
+    /* Main */
+    main {
+      margin-left: var(--sidebar-w); padding: calc(var(--header-h) + 2rem) 3rem 4rem;
+      max-width: 900px;
+    }
+    h1, h2, h3 { color: var(--text); margin-bottom: 0.75rem; line-height: 1.2; }
+    h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+    h2 { font-size: 1.75rem; margin-top: 3rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1.25rem; color: var(--blue-glow); margin-top: 2rem; }
+    p { margin-bottom: 1rem; color: var(--text-muted); }
+    .badge { display: inline-block; background: var(--green); color: #000; font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-left: 8px; vertical-align: middle; }
+    .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+    .feature-card { background: var(--surface); border: 1px solid var(--border); padding: 1rem; border-radius: var(--radius); }
+    .feature-card h4 { color: var(--green-light); margin-bottom: 0.5rem; }
+    .table-wrap { overflow-x: auto; margin: 1rem 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th, td { padding: 0.75rem; border-bottom: 1px solid var(--border); text-align: left; }
+    th { color: var(--blue-glow); background: var(--surface-hover); }
+    .tip { background: rgba(59,130,246,0.1); border-left: 4px solid var(--blue); padding: 1rem; border-radius: 0 var(--radius) var(--radius) 0; margin: 1.5rem 0; }
+    .tip strong { color: var(--blue); }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .menu-toggle { display: block; }
+      #sidebar { transform: translateX(-100%); }
+      #sidebar.open { transform: translateX(0); box-shadow: var(--shadow); }
+      main { margin-left: 0; padding: calc(var(--header-h) + 1.5rem) 1.5rem 3rem; }
+      .feature-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">🦥 <span>Sloth.js</span></div>
+    <button class="menu-toggle" data-click="toggleMenu">☰</button>
+  </header>
+
+  <aside id="sidebar">
+    <div class="nav-group">
+      <div class="nav-title">Getting Started</div>
+      <a href="#intro" class="nav-link active">Introduction</a>
+      <a href="#install" class="nav-link">Installation</a>
+      <a href="#quickstart" class="nav-link">Quick Start</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-title">Core API</div>
+      <a href="#dom" class="nav-link">DOM Utilities</a>
+      <a href="#http" class="nav-link">HTTP Client</a>
+      <a href="#actions" class="nav-link">Declarative Actions</a>
+      <a href="#state" class="nav-link">Auto-Bind State</a>
+      <a href="#templates" class="nav-link">Template Engine</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-title">Advanced</div>
+      <a href="#routing" class="nav-link">SPA Hash Routing</a>
+      <a href="#forms" class="nav-link">Forms & Validation</a>
+      <a href="#loader" class="nav-link">Global Loader</a>
+      <a href="#events" class="nav-link">Event Delegation</a>
+    </div>
+  </aside>
+
+  <main id="content">
+    <section id="intro">
+      <h1>Move slow. Build fast. 🦥</h1>
+      <p>Sloth.js is a lightweight, declarative frontend toolkit designed for developers who want to write less boilerplate and focus on logic. It bundles DOM manipulation, reactive state, form handling, routing, and HTTP requests into a single, zero-dependency module.</p>
+      <div class="feature-grid">
+        <div class="feature-card"><h4>🔌 Zero Config</h4><p>Drop it in. No build step required. Works natively with ES modules.</p></div>
+        <div class="feature-card"><h4>⚡ Declarative</h4><p>Bind data, trigger actions, and handle forms with simple HTML attributes.</p></div>
+        <div class="feature-card"><h4>📦 All-in-One</h4><p>Fetch wrapper, DOM utils, router, validator, and reactivity in ~3KB.</p></div>
+      </div>
+    </section>
+
+    <section id="install">
+      <h2>Installation</h2>
+      <p>Include Sloth.js directly in your HTML. It exports a default singleton instance.</p>
+      <pre><code>&lt;script type="module"&gt;
+  import app from './sloth.js';
+  // app is now ready to use
+&lt;/script&gt;</code><button class="copy-btn">Copy</button></pre>
+    </section>
+
+    <section id="dom">
+      <h2>DOM Utilities <span class="badge">Chainable</span></h2>
+      <p>Lightweight jQuery-like helpers built on native DOM APIs.</p>
+      <h3>app.el(selector) & app.els(selector)</h3>
+      <p>Select single or multiple elements and chain methods.</p>
+      <pre><code>app.el('#title').text('Updated').addClass('active');
+app.els('.card').on('click', (e) => console.log(e.target));</code><button class="copy-btn">Copy</button></pre>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Method</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>.html(val)</code></td><td>Get/set innerHTML</td></tr>
+            <tr><td><code>.text(val)</code></td><td>Get/set textContent</td></tr>
+            <tr><td><code>.addClass()</code></td><td>Add CSS classes</td></tr>
+            <tr><td><code>.removeClass()</code></td><td>Remove CSS classes</td></tr>
+            <tr><td><code>.toggleClass()</code></td><td>Toggle CSS classes</td></tr>
+            <tr><td><code>.on(event, handler)</code></td><td>Attach event listeners</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="http">
+      <h2>HTTP Client <span class="badge">Fetch Wrapper</span></h2>
+      <p>Simplified async requests with automatic JSON parsing and auth headers.</p>
+      <pre><code>app.setBaseURL('https://api.example.com');
+app.setToken('your_jwt_token');
+
+const users = await app.get('/users');
+const newUser = await app.post('/users', { name: 'Alex' });</code><button class="copy-btn">Copy</button></pre>
+      <p>Available methods: <code>get</code>, <code>post</code>, <code>put</code>, <code>delete</code>. All return Promises. Errors are logged automatically.</p>
+    </section>
+
+    <section id="actions">
+      <h2>Declarative Actions</h2>
+      <p>Bind JavaScript functions directly to HTML elements using <code>data-click</code> and <code>data-submit</code>.</p>
+      <pre><code>&lt;!-- HTML --&gt;
+&lt;button data-click="sayHi"&gt;Greet&lt;/button&gt;
+&lt;form data-submit="saveUser"&gt;
+  &lt;input name="email" type="email" /&gt;
+  &lt;button type="submit"&gt;Save&lt;/button&gt;
+&lt;/form&gt;</code><button class="copy-btn">Copy</button></pre>
+      <pre><code>// JS
+app.actions({
+  sayHi: ({ el, params }) => {
+    alert(`Hello! Params: ${params.join(', ')}`);
+  },
+  saveUser: ({ data }) => {
+    console.log('Form payload:', data);
+  }
+});</code><button class="copy-btn">Copy</button></pre>
+      <div class="tip"><strong>Note:</strong> Pass parameters like <code>data-click="sayHi('John', 25)"</code>. Form submissions automatically include <code>data</code> as a JSON object.</div>
+    </section>
+
+    <section id="state">
+      <h2>Auto-Bind State <span class="badge">Reactive</span></h2>
+      <p>Create a reactive proxy that syncs with the DOM via <code>data-bind</code> attributes.</p>
+      <pre><code>const state = app.bind({ user: { name: '', age: 20 } });
+
+// Update DOM automatically
+document.getElementById('nameInput').addEventListener('input', e => {
+  state.user.name = e.target.value; // Triggers re-render on [data-bind="user.name"]
+});</code><button class="copy-btn">Copy</button></pre>
+      <p>Any element with <code>data-bind="path"</code> will update its <code>value</code> (inputs) or <code>textContent</code> (divs/spans) when the state changes.</p>
+    </section>
+
+    <section id="templates">
+      <h2>Template Engine</h2>
+      <p>Simple string interpolation with nested property support.</p>
+      <pre><code>const html = app.render(
+  '&lt;h2&gt;{user.name} ({user.age})&lt;/h2&gt;&lt;p&gt;{status}&lt;/p&gt;',
+  { user: { name: 'Rodrigo', age: 30 }, status: 'Active' }
+);
+// → &lt;h2&gt;Rodrigo (30)&lt;/h2&gt;&lt;p&gt;Active&lt;/p&gt;</code><button class="copy-btn">Copy</button></pre>
+    </section>
+
+    <section id="routing">
+      <h2>SPA Hash Routing</h2>
+      <p>Lightweight hash-based router for single-page applications.</p>
+      <pre><code>app.route('/', () => app.el('#app').html('&lt;h1&gt;Home&lt;/h1&gt;'));
+app.route('/user/:id', ({ id }) => app.el('#app').html(`User ${id}`));
+app.route('/about', () => app.el('#app').html('&lt;h1&gt;About&lt;/h1&gt;'));
+
+app.startRouter();</code><button class="copy-btn">Copy</button></pre>
+      <p>Navigate with <code>#/</code>, <code>#/user/42</code>, etc. Parameters are parsed and passed to the handler.</p>
+    </section>
+
+    <section id="forms">
+      <h2>Forms & Validation</h2>
+      <h3>app.formToJSON(form)</h3>
+      <p>Converts form inputs to a clean JSON object. Handles checkboxes, radios, and multi-selects automatically.</p>
+      <h3>app.validate(form)</h3>
+      <p>Validates inputs using HTML <code>data-*</code> attributes. Returns <code>{ valid: boolean, errors: Object }</code>.</p>
+      <pre><code>&lt;input name="email" data-required data-email /&gt;
+&lt;input name="age" data-required data-min="18" data-max="99" /&gt;
+&lt;input name="code" data-pattern="^[A-Z]{3}$" /&gt;</code><button class="copy-btn">Copy</button></pre>
+      <pre><code>const { valid, errors } = app.validate('#myForm');
+if (!valid) console.error('Validation failed:', errors);</code><button class="copy-btn">Copy</button></pre>
+    </section>
+
+    <section id="loader">
+      <h2>Global Loader</h2>
+      <p>Show/hide a fullscreen loading overlay. Customizable via HTML.</p>
+      <pre><code>app.setLoader('&lt;div class="loader"&gt;🦥 Loading...&lt;/div&gt;');
+app.showLoader();
+// ... async operation ...
+app.hideLoader();</code><button class="copy-btn">Copy</button></pre>
+    </section>
+
+    <section id="events">
+      <h2>Event Delegation</h2>
+      <p>Attach listeners to parent containers. Automatically handles dynamically added elements.</p>
+      <pre><code>app.on('.dynamic-btn', 'click', (e, target) => {
+  console.log('Clicked:', target.id);
+});
+app.off('.dynamic-btn', 'click'); // Remove specific or all</code><button class="copy-btn">Copy</button></pre>
+      <div class="tip"><strong>Why delegation?</strong> One listener handles all matching elements, reducing memory overhead and simplifying dynamic DOM management.</div>
+    </section>
+
+    <footer style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border); text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+      <p>🦥 Sloth.js — Built for developers who value simplicity. <a href="https://github.com/rodrigocborges/sloth.js" target="_blank">View on GitHub</a></p>
+    </footer>
+  </main>
+
+  <script type="module">
+    import app from '../src/sloth.js';
+
+    // Mobile sidebar toggle
+    app.actions({
+      toggleMenu: () => {
+        app.el('#sidebar').toggleClass('open');
+      }
+    });
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', (e) => {
+      if (window.innerWidth <= 768 && !e.target.closest('#sidebar') && !e.target.closest('.menu-toggle')) {
+        app.el('#sidebar').removeClass('open');
+      }
+    });
+
+    // Smooth scroll & active link tracking
+    app.els('.nav-link').on('click', (e) => {
+      e.preventDefault();
+      const target = document.querySelector(e.target.getAttribute('href'));
+      if (target) {
+        window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
+        history.pushState(null, '', e.target.getAttribute('href'));
+      }
+    });
+
+    // Copy code functionality
+    app.els('.copy-btn').on('click', (e) => {
+      const code = e.target.closest('pre').querySelector('code').textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        const original = e.target.textContent;
+        e.target.textContent = 'Copied!';
+        setTimeout(() => e.target.textContent = original, 1500);
+      });
+    });
+
+    // Highlight active section on scroll
+    const sections = document.querySelectorAll('section[id]');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          app.els('.nav-link').removeClass('active');
+          app.el(`a[href="#${entry.target.id}"]`).addClass('active');
+        }
+      });
+    }, { threshold: 0.2, rootMargin: '-80px 0px -50% 0px' });
+    sections.forEach(sec => observer.observe(sec));
+  </script>
+</body>
+</html>

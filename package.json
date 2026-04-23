@@ -1,0 +1,16 @@
+{
+  "name": "slothjs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "esbuild src/sloth.js --bundle --minify --outfile=dist/sloth.min.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "esbuild": "^0.28.0"
+  }
+}
