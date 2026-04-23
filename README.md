@@ -46,6 +46,12 @@ Just include it:
 </script>
 ```
 
+Or use via CDN (latest):
+
+```html
+<script type="module" src="https://cdn.jsdelivr.net/gh/rodrigocborges/sloth.js@latest/dist/sloth.min.js"></script>
+```
+
 ---
 
 ## ⚡ Quick Example
@@ -243,7 +249,7 @@ Instead, it focuses on:
 
 ## 🛠 Roadmap
 
-* [ ] CDN version
+* [x] CDN version
 * [ ] Devtools / debug mode
 * [ ] Plugin system
 
