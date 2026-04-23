@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "esbuild src/sloth.js --bundle --minify --outfile=dist/sloth.min.js"
+    "build": "esbuild src/sloth.js --bundle --minify --format=esm --outfile=dist/sloth.min.js"
   },
   "keywords": [],
   "author": "",

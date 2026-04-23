@@ -49,7 +49,11 @@ Just include it:
 Or use via CDN (latest):
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/gh/rodrigocborges/sloth.js@latest/dist/sloth.min.js"></script>
+<script type="module">
+  import Sloth from 'https://cdn.jsdelivr.net/gh/rodrigocborges/sloth.js@latest/dist/sloth.min.js';
+
+  Sloth.copy('Text to text import');
+</script>
 ```
 
 ---
