@@ -328,6 +328,86 @@ class Sloth {
       }
     });
   }
+
+  // ==========================================
+  // 11. Clipboard
+  // ==========================================
+  
+  /**
+   * Copies text or the value/content of an element to the clipboard.
+   * @param {string} textOrSelector - Literal text or a CSS selector (e.g., '#input-id').
+   * @param {Object} [options={}] - Callbacks for success(text) and error(err).
+   * @returns {Sloth} The Sloth instance for chaining.
+   */
+  copy(textOrSelector, options = {}) {
+    let textToCopy = textOrSelector;
+    
+    // If it has no spaces and starts with # or ., assume it is a DOM selector
+    if (typeof textOrSelector === 'string' && /^[#.]\w/.test(textOrSelector)) {
+      const el = document.querySelector(textOrSelector);
+      if (el) {
+        // Get value if it's an input/textarea, otherwise get textContent
+        textToCopy = el.value !== undefined ? el.value : el.textContent;
+      }
+    }
+
+    if (!navigator.clipboard) {
+      console.warn('[Sloth] Clipboard API not supported in this browser.');
+      if (options.error) options.error(new Error('Clipboard API not supported'));
+      return this;
+    }
+
+    navigator.clipboard.writeText(textToCopy)
+      .then(() => {
+        if (options.success) options.success(textToCopy);
+      })
+      .catch(err => {
+        console.error('[Sloth] Failed to copy:', err);
+        if (options.error) options.error(err);
+      });
+
+    return this;
+  }
+
+  // ==========================================
+  // 12. Intersection Observer
+  // ==========================================
+
+  /**
+   * Executes a callback when elements enter the visible viewport.
+   * @param {string|HTMLElement|NodeList|Array} selector - Elements to observe.
+   * @param {Function} handler - Function called with (element, IntersectionObserverEntry).
+   * @param {Object} [options={}] - Settings: { once: boolean (default true), margin: string, threshold: number }
+   * @returns {Sloth} The Sloth instance for chaining.
+   */
+  onVisible(selector, handler, options = {}) {
+    const config = {
+      root: null,
+      rootMargin: options.margin || '0px',
+      threshold: options.threshold || 0
+    };
+
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          handler(entry.target, entry);
+          // By default, stop observing after the first appearance
+          if (options.once !== false) {
+            obs.unobserve(entry.target);
+          }
+        }
+      });
+    }, config);
+
+    // Resolve selector to ensure we have an array/NodeList
+    const elements = typeof selector === 'string' 
+      ? document.querySelectorAll(selector) 
+      : (selector.length !== undefined ? selector : [selector]);
+
+    elements.forEach(el => observer.observe(el));
+    
+    return this;
+  }
 }
 
 // Export default instance/class
